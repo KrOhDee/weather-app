@@ -54,6 +54,7 @@ function randomWeather() {
 
   const state = pickRandomValue(states);
   getWeather(state);
+  return state;
 }
 async function getWeather(where) {
   try {
@@ -92,12 +93,16 @@ function displayWeather(location, temp, feelsLike, weatherDesc) {
       pElements[i].remove();
     }
   }
+  console.log(weatherDesc);
 
   const display = document.querySelector('.display');
   let rowOne = document.createElement('p');
   let rowTwo = document.createElement('p');
   let rowThree = document.createElement('p');
   let rowFour = document.createElement('p');
+  let image =
+    document.querySelector('.weather-img') || document.createElement('img');
+  image.classList.add('weather-img');
 
   rowOne.innerText = location;
   rowOne.classList.add('location');
@@ -109,6 +114,20 @@ function displayWeather(location, temp, feelsLike, weatherDesc) {
   display.appendChild(rowTwo);
   display.appendChild(rowThree);
   display.appendChild(rowFour);
+
+  if (weatherDesc === 'Snow') {
+    image.src = 'images/snow.png';
+  } else if (weatherDesc === 'Clear') {
+    image.src = 'images/sun.png';
+  } else if (weatherDesc === 'Rain') {
+    image.src = 'images/rain.png';
+  } else if (weatherDesc === 'Mist') {
+    image.src = 'images/mist.jpg';
+  } else if (weatherDesc === 'Clouds') {
+    image.src = 'images/cloud.png';
+  }
+
+  display.appendChild(image);
 }
 
 function findWeatherKey(arr) {
@@ -127,12 +146,24 @@ function pickRandomValue(arr) {
 
 function searchForWeather() {
   let where = document.querySelector('.search').value;
-  document.querySelector('.search').value = '';
-  getWeather(where);
+  if (where.trim() === '') {
+    randomWeather();
+  } else {
+    document.querySelector('.search').value = '';
+    getWeather(where);
+  }
 }
 
 document
   .querySelector('.search-btn')
   .addEventListener('click', searchForWeather);
 
-randomWeather();
+document.querySelector('.search').addEventListener('keydown', function (event) {
+  if (event.keyCode === 13) {
+    searchForWeather();
+  }
+});
+
+window.addEventListener('load', () => {
+  randomWeather();
+});
